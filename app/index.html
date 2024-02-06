@@ -3,29 +3,33 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Product Catalog</title>
+    <title>Leaflet Map with Inputs</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+      #map {
+        height: 500px;
+      }
+
+      #form-container {
+        margin-top: 10px;
+      }
+    </style>
   </head>
+
   <body>
-    <h1>Product Catalog</h1>
-    <!-- 
-    <label for="productId">ID:</label>
-    <input type="text" id="productId" placeholder="Enter ID" /> -->
+    <div id="form-container">
+      <label for="start">Start Location:</label>
+      <input type="text" id="start" placeholder="Enter start location" />
 
-    <label for="productName">Name:</label>
-    <input type="text" id="productName" placeholder="Enter Name" />
+      <label for="end">End Location:</label>
+      <input type="text" id="end" placeholder="Enter end location" />
 
-    <label for="productDescription">Description:</label>
-    <input
-      type="text"
-      id="productDescription"
-      placeholder="Enter Description"
-    />
+      <button onclick="submitLocations()">Submit</button>
+    </div>
 
-    <button onclick="getAllProducts()">Get All Products</button>
-    <button onclick="createProduct()">Create Product</button>
+    <div id="map"></div>
 
-    <div id="output"></div>
-
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="index.js"></script>
   </body>
 </html>

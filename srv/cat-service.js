@@ -1,5 +1,4 @@
-const cds = require("@sap/cds");
-
+// const { v4: uuidv4 } = require("uuid");
 module.exports = async (srv) => {
   const db = await cds.connect.to({
     kind: "postgres",
@@ -11,42 +10,46 @@ module.exports = async (srv) => {
       database: "postgres",
     },
   });
-
-  srv.on("CREATE", "Products", async (req) => {
+  //-----------------------------Create Coordinate post req to DB  -----------------------------
+  srv.on("CREATE", "coordinates", async (req) => {
     const { data } = req;
 
+    console.log("coordinates", data);
     try {
-      await insertData(db, data);
+      const query = `INSERT INTO map_coordinates
+        (id,startpoint,endpoint)
+        VALUES($1, $2, $3)
+        RETURNING *`;
+
+      const values = [data.id, data.startpoint, data.endpoint];
+      const result = await db.run(query, values);
+      return result;
     } catch (error) {
-      console.log("errorshow", error);
+      console.error("Error creating city", error);
+      throw error;
     }
   });
 
-  srv.on("READ", "Products", async (req) => {
-    return handleReadProducts(db);
+  //------------------------------Read data from DB --------------------------------------------
+  srv.on("READ", "coordinates", async (req) => {
+    try {
+      const result = await db.run(SELECT.from("map_coordinates"));
+      console.log(result, "aaaaaa");
+      return result;
+    } catch (err) {
+      console.error("Error registering user:", err);
+      throw err;
+    }
   });
-};
 
-async function insertData(db, data) {
-  console.log("datacoming", data);
-  const query = INSERT.into("capmProject_products").entries([
-    { name: data.name, description: data.description },
-  ]);
-
-  try {
-    const result = await db.run(query);
-    console.log("newName", result);
-    return result;
-  } catch (error) {
-    console.log("error handling", error);
-  }
-}
-
-const handleReadProducts = async (db) => {
-  try {
-    const results = await db.run(SELECT.from("capmProject_products"));
-    return results;
-  } catch (error) {
-    console.error("Error connecting to PostgreSQL database:", error);
-  }
+  //--------------------------------Read data from db of pipe info --------------------------------
+  srv.on("READ", "getinfo", async (req) => {
+    try {
+      const result = await db.run(SELECT.from("map_pipeinfo"));
+      return result;
+    } catch (err) {
+      console.error("Error registering user:", err);
+      throw err;
+    }
+  });
 };
